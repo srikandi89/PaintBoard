@@ -1,8 +1,10 @@
 package com.paintboard.paintboard;
 
+import org.json.JSONArray;
+
 public interface MainInteractor {
     interface MainInteractorListener {
-        void onSuccess();
+        void onSuccess(JSONArray jsonResponse);
         void onFailed();
     }
 

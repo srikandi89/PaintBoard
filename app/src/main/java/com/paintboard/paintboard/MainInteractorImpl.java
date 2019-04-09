@@ -7,5 +7,6 @@ public class MainInteractorImpl implements MainInteractor {
          * TODO :
          * Call Vangogh document downloader here
          */
+
     }
 }

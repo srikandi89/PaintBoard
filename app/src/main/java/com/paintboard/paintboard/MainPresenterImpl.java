@@ -1,5 +1,7 @@
 package com.paintboard.paintboard;
 
+import org.json.JSONArray;
+
 public class MainPresenterImpl implements MainPresenter, MainInteractor.MainInteractorListener {
     private MainView mView;
     private MainInteractor mInteractor;
@@ -10,9 +12,9 @@ public class MainPresenterImpl implements MainPresenter, MainInteractor.MainInte
     }
 
     @Override
-    public void onSuccess() {
+    public void onSuccess(JSONArray jsonResponse) {
         mView.hideLoading();
-        mView.showContent();
+        mView.showContent(jsonResponse);
     }
 
     @Override
