@@ -3,4 +3,5 @@
     <string name="failure_dialog_title">Something\'s Wrong</string>
     <string name="failure_http_get_dialog_content">An error occurred while get content from internet</string>
     <string name="button_ok">OK</string>
+    <string name="data_url">http://pastebin.com/raw/wgkJgazE</string>
 </resources>
