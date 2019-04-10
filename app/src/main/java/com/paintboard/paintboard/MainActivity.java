@@ -2,6 +2,8 @@ package com.paintboard.paintboard;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -9,11 +11,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.paintboard.paintboard.adapters.ImageListAdapter;
 import com.paintboard.paintboard.models.ImageContent;
 import com.vangogh.downloader.DocumentDownloader;
 import com.vangogh.downloader.ImageDownloader;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
     private ImageDownloader imageDownloader;
     private MainPresenter presenter;
     private String dataUrl;
+    private ImageListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +78,28 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
     @Override
     public void showContent(JSONArray jsonResponse) {
         Log.d(MainActivity.class.getSimpleName(), jsonResponse.toString());
+
+        try {
+            for (int i=0; i<jsonResponse.length(); i++) {
+                JSONObject jsonObject = jsonResponse.getJSONObject(i);
+
+                JSONObject rawImageUrl = jsonObject.getJSONObject("urls");
+                String url = rawImageUrl.getString("raw");
+                contents.add(new ImageContent(url));
+            }
+
+            if (contents.size() > 0) {
+                adapter = new ImageListAdapter(this, contents, imageDownloader);
+                GridLayoutManager llm = new GridLayoutManager(getApplicationContext(), 2);
+                llm.setOrientation(RecyclerView.VERTICAL);
+                rvItems.setLayoutManager(llm);
+                rvItems.setItemAnimator(new DefaultItemAnimator());
+                rvItems.setAdapter(adapter);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
