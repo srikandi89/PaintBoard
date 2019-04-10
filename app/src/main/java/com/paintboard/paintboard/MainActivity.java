@@ -54,9 +54,6 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
         imageDownloader = ((MyApplication)this.getApplication()).getImageDownloader();
         presenter = new MainPresenterImpl(this);
         dataUrl = getString(R.string.data_url);
-
-        Log.d(MainActivity.class.getSimpleName(), "Document Downloader == Null ? "+(documentDownloader == null));
-        Log.d(MainActivity.class.getSimpleName(), "Image Downloader == Null ? "+(imageDownloader == null));
     }
 
     @Override
