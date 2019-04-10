@@ -40,38 +40,28 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int i) {
         final ImageContent content = contents.get(i);
-        Log.d(ImageListAdapter.class.getSimpleName(), "IMAGE #"+i);
-
-        holder.progressBar.setVisibility(View.VISIBLE);
-        holder.imageView.setVisibility(View.GONE);
 
         downloadListener = new ImageDownloader.OnDownloadListener() {
             @Override
             public void onDownloadFinished() {
-                holder.progressBar.setVisibility(View.GONE);
-                holder.imageView.setVisibility(View.VISIBLE);
-                holder.cancelBtn.setText("Re-download");
+                holder.cancelBtn.setText(context.getString(R.string.title_redownload));
             }
 
             @Override
             public void onDownloadStarted() {
-                holder.progressBar.setVisibility(View.VISIBLE);
-                holder.imageView.setVisibility(View.GONE);
-                holder.cancelBtn.setText("Cancel");
+                holder.cancelBtn.setText(context.getString(R.string.title_cancel));
             }
 
             @Override
             public void onDownloadStopped() {
-                holder.cancelBtn.setText("Retry");
-                holder.imageView.setVisibility(View.VISIBLE);
-                holder.progressBar.setVisibility(View.GONE);
+                holder.cancelBtn.setText(context.getString(R.string.title_retry));
+                holder.imageView.setImageDrawable(context.getDrawable(R.drawable.baseline_refresh_24));
             }
 
             @Override
             public void onDownloadFailed() {
-                holder.cancelBtn.setText("Retry");
-                holder.imageView.setVisibility(View.VISIBLE);
-                holder.progressBar.setVisibility(View.GONE);
+                holder.cancelBtn.setText(context.getString(R.string.title_retry));
+                holder.imageView.setImageDrawable(context.getDrawable(R.drawable.baseline_refresh_24));
             }
         };
 
@@ -80,15 +70,16 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
         holder.cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (holder.cancelBtn.getText().toString().toLowerCase().equals("cancel")) {
                     Log.d(ImageListAdapter.class.getSimpleName(), "Download Image from "+content.getUrl()+" about to stop");
 
                     imageDownloader.cancel(content.getUrl());
 
-                    holder.cancelBtn.setText("Restart");
+                    holder.cancelBtn.setText(context.getString(R.string.title_retry));
                 }
-                else if (holder.cancelBtn.getText().toString().toLowerCase().equals("restart")) {
-                    Log.d(ImageListAdapter.class.getSimpleName(), "Download image from "+content.getUrl()+" about to started");
+                else if (holder.cancelBtn.getText().toString().toLowerCase().equals("retry")) {
+                    holder.cancelBtn.setText(context.getString(R.string.title_cancel));
                     imageDownloader.toImageView(content.getUrl(), holder.imageView, downloadListener);
                 }
             }
@@ -108,14 +99,12 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
 
         public ImageView imageView;
         public Button cancelBtn;
-        public ProgressBar progressBar;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.imageView);
             cancelBtn = itemView.findViewById(R.id.btn_cancel);
-            progressBar = itemView.findViewById(R.id.progress_bar);
         }
     }
 }
