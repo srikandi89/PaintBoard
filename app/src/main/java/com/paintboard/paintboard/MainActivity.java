@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements MainView, SwipeRe
 
         init();
 
+        presenter.doGetHttpResponse(dataUrl, documentDownloader, imageDownloader);
+
         swipeRefreshLayout.setOnRefreshListener(this);
     }
 
