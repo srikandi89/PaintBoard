@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.paintboard.paintboard.R;
 import com.paintboard.paintboard.models.ImageContent;
@@ -21,6 +22,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
     private List<ImageContent> contents;
     private Context context;
     private ImageDownloader imageDownloader;
+    private ImageDownloader.OnDownloadListener downloadListener;
 
     public ImageListAdapter(Context context, List<ImageContent> contents, ImageDownloader imageDownloader) {
         this.context = context;
@@ -40,7 +42,40 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
         final ImageContent content = contents.get(i);
         Log.d(ImageListAdapter.class.getSimpleName(), "IMAGE #"+i);
 
-        imageDownloader.toImageView(content.getUrl(), holder.imageView);
+        holder.progressBar.setVisibility(View.VISIBLE);
+        holder.imageView.setVisibility(View.GONE);
+
+        downloadListener = new ImageDownloader.OnDownloadListener() {
+            @Override
+            public void onDownloadFinished() {
+                holder.progressBar.setVisibility(View.GONE);
+                holder.imageView.setVisibility(View.VISIBLE);
+                holder.cancelBtn.setText("Re-download");
+            }
+
+            @Override
+            public void onDownloadStarted() {
+                holder.progressBar.setVisibility(View.VISIBLE);
+                holder.imageView.setVisibility(View.GONE);
+                holder.cancelBtn.setText("Cancel");
+            }
+
+            @Override
+            public void onDownloadStopped() {
+                holder.cancelBtn.setText("Retry");
+                holder.imageView.setVisibility(View.VISIBLE);
+                holder.progressBar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onDownloadFailed() {
+                holder.cancelBtn.setText("Retry");
+                holder.imageView.setVisibility(View.VISIBLE);
+                holder.progressBar.setVisibility(View.GONE);
+            }
+        };
+
+        imageDownloader.toImageView(content.getUrl(), holder.imageView, downloadListener);
 
         holder.cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +89,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
                 }
                 else if (holder.cancelBtn.getText().toString().toLowerCase().equals("restart")) {
                     Log.d(ImageListAdapter.class.getSimpleName(), "Download image from "+content.getUrl()+" about to started");
-                    imageDownloader.toImageView(content.getUrl(), holder.imageView);
+                    imageDownloader.toImageView(content.getUrl(), holder.imageView, downloadListener);
                 }
             }
         });
@@ -73,12 +108,14 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
 
         public ImageView imageView;
         public Button cancelBtn;
+        public ProgressBar progressBar;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             imageView = itemView.findViewById(R.id.imageView);
             cancelBtn = itemView.findViewById(R.id.btn_cancel);
+            progressBar = itemView.findViewById(R.id.progress_bar);
         }
     }
 }
