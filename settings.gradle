@@ -1,2 +1,1 @@
 include ':app', ':vangogh-downloader'
-project(':vangogh-downloader').projectDir = new File(settingsDir, '../vangogh-downloader')
